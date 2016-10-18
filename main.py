@@ -66,15 +66,62 @@ def text_to_button(msg, color, buttonx, buttony, buttonwidth, buttonheight, size
         textRect.center = ((buttonx + (buttonwidth/2)), buttony+(buttonheight/2))
         gameDisplay.blit(textSurf, textRect)
 
-def button(text, x, y, width, height, inactive_color, active_color):
+def game_controls():
+    
+    gcont = True
+
+    while gcont:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        
+        gameDisplay.fill(white)
+        message_to_screen("Controls", green, -100, "large")
+        message_to_screen("Fire: Spacebar",
+                          black,
+                          -30,
+                          "small")
+        message_to_screen("Move turret Up and Down arrows",
+                          black,
+                          10,
+                          "small")
+        message_to_screen("Move Tank: Left and Right Arrows",
+                          black,
+                          50,
+                          "small")
+        message_to_screen("Pause: p",
+                  black,
+                  90,
+                  "small")
+
+        button("Play", 150,500,100,50, green, light_green, action="play" )
+        button("Main Menu",350,500,100,50, yellow, light_yellow, action="main")
+        button("Quit", 550,500,100,50, red, light_red, action="quit")
+        
+        pygame.display.update()
+        clock.tick(15)
+
+def button(text, x, y, width, height, inactive_color, active_color, action=None):
     cur = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
     if x + width > cur[0] > x and y + height > cur[1] > y:
         pygame.draw.rect(gameDisplay, active_color, (x,y,width,height))
+        if click[0] == 1 and action != None:
+            if action == "quit":
+                pygame.quit()
+                quit()
+            if action == "controls":
+                game_controls()
+            if action == "play":
+                gameLoop()
+            if action == "main":
+                game_intro()
+            
     else:
         pygame.draw.rect(gameDisplay, inactive_color, (x,y,width,height))
     text_to_button(text, black, x, y, width, height)
         
-    
 
 def game_intro():
     
@@ -107,9 +154,9 @@ def game_intro():
                           100,
                           "small")
 
-        button("Play", 150,500,100,50, green, light_green )
-        button("Controls",350,500,100,50, yellow, light_yellow )
-        button("Quit", 550,500,100,50, red, light_red)
+        button("Play", 150,500,100,50, green, light_green, action="play" )
+        button("Controls",350,500,100,50, yellow, light_yellow, action="controls")
+        button("Quit", 550,500,100,50, red, light_red, action="quit")
         
         pygame.display.update()
         clock.tick(15)
