@@ -88,10 +88,10 @@ def game_intro():
                           black,
                           100,
                           "small")
-        message_to_screen("Press c to play, p to pause or q to quit.",
-                  black,
-                  180,
-                  "small")
+        pygame.draw.rect(gameDisplay, green, (150,500,100,50))
+        pygame.draw.rect(gameDisplay, yellow, (350,500,100,50))
+        pygame.draw.rect(gameDisplay, red, (550,500,100,50))
+        
         pygame.display.update()
         clock.tick(15)
 
