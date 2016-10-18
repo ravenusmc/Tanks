@@ -58,6 +58,12 @@ def randAppleGen():
 
     return randAppleX,randAppleY
 
+def text_to_button(msg, color, buttonx, buttony, buttonwidth, buttonheight, size ='small'):
+        textSurf, textRect = text_objects(msg,color,size)
+        textRect.center = ((buttonx + (buttonwidth/2)), buttony+(buttonheight/2))
+        gameDisplay.blit(textSurf, textRect)
+    
+
 def game_intro():
     
     intro = True
@@ -91,6 +97,10 @@ def game_intro():
         pygame.draw.rect(gameDisplay, green, (150,500,100,50))
         pygame.draw.rect(gameDisplay, yellow, (350,500,100,50))
         pygame.draw.rect(gameDisplay, red, (550,500,100,50))
+
+        text_to_button("Play", black, 150,500,100,50 )
+        text_to_button("Controls", black, 350,500,100,50 )
+        text_to_button("Quit", black, 550,500,100,50 )
         
         pygame.display.update()
         clock.tick(15)
