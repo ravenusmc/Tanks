@@ -21,6 +21,9 @@ pygame.display.set_caption('Tanks')
 
 clock = pygame.time.Clock()
 
+mainTankX = display_width * 0.9
+mainTankY = display_height * 0.9
+
 block_size = 10
 FPS = 30
 
@@ -29,6 +32,9 @@ medfont = pygame.font.SysFont("comicsansms", 50)
 largefont = pygame.font.SysFont("comicsansms", 80)
 
 ##Functions
+def tank(x,y):
+    pygame.draw.circle(gameDisplay, black, (int(x), int(y)), 20)
+
 def pause():
     
     paused = True
@@ -222,6 +228,7 @@ def gameLoop():
     
     
         gameDisplay.fill(white)
+        tank(mainTankX, mainTankY)
         pygame.display.update()
         clock.tick(FPS)
         
