@@ -23,6 +23,8 @@ clock = pygame.time.Clock()
 
 mainTankX = display_width * 0.9
 mainTankY = display_height * 0.9
+tankWidth = 40
+tankHeight = 20
 
 block_size = 10
 FPS = 30
@@ -33,7 +35,11 @@ largefont = pygame.font.SysFont("comicsansms", 80)
 
 ##Functions
 def tank(x,y):
-    pygame.draw.circle(gameDisplay, black, (int(x), int(y)), 20)
+    x = int(x)
+    y = int(y)
+    pygame.draw.circle(gameDisplay, black, (x,y), int(tankHeight/2))
+    pygame.draw.rect(gameDisplay, black, (x-tankHeight, y, tankWidth, tankHeight ))
+    
 
 def pause():
     
