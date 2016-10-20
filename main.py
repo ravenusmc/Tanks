@@ -36,13 +36,29 @@ medfont = pygame.font.SysFont("comicsansms", 50)
 largefont = pygame.font.SysFont("comicsansms", 80)
 
 ##Functions
-def tank(x,y):
+def tank(x,y, turPos):
     x = int(x)
     y = int(y)
+
+    possibleTurrets = [(x-27, y-2),
+                        (x-26, y-5),
+                       (x-25, y-8),
+                       (x-23, y-12),
+                       (x-20, y-14),
+                       (x-18, y-15),
+                       (x-15, y-17),
+                       (x-13, y-19),
+                       (x-11, y-21)
+                       ]
+
+
     pygame.draw.circle(gameDisplay, black, (x,y), int(tankHeight/2))
     pygame.draw.rect(gameDisplay, black, (x-tankHeight, y, tankWidth, tankHeight ))
-    pygame.draw.line(gameDisplay, black, (x,y), (x-20, y-20), turretWidth)
 
+    pygame.draw.line(gameDisplay, black, (x,y), possibleTurrets[turPos], turretWidth)
+
+    
+    #Drawing the wheels
     pygame.draw.circle(gameDisplay, black, (x-15, y+20), wheelWidth)
     pygame.draw.circle(gameDisplay, black, (x-10, y+20), wheelWidth)
     pygame.draw.circle(gameDisplay, black, (x-5, y+20), wheelWidth)
@@ -74,6 +90,10 @@ def pause():
 
         clock.tick(10)
 
+def barrier(xlocation, randomHeight):
+    pygame.draw.rect(gameDisplay, black, [xlocation, display_height-randomHeight, 50, randomHeight])
+
+    
 def score(score):
     text = smallfont.render("Score: "+str(score), True, black)
     gameDisplay.blit(text, [0,0])
@@ -203,12 +223,18 @@ def message_to_screen(msg, color, y_displace=0, size= "small"):
     
 #main game function
 def gameLoop():
-
+    
     gameExit = False
     gameOver = False
     mainTankX = display_width * 0.9
     mainTankY = display_height * 0.9
     tankMove = 0
+
+    currentTurPos = 0
+    changeTur = 0
+
+    xlocation = (display_width / 2) + random.randint(-0.2 * display_width, 0.2 * display_width)
+    randomHeight = random.randrange(display_height * 0.1, display_height * 0.6)
 
     while not gameExit:
 
@@ -239,17 +265,28 @@ def gameLoop():
                 elif event.key == pygame.K_RIGHT:
                     tankMove = 5
                 elif event.key == pygame.K_UP:
-                    pass
+                    changeTur = 1
                 elif event.key == pygame.K_DOWN:
-                    pass
+                    changeTur = -1
                 elif event.key == pygame.K_p:
                     pause()
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    tankMove = 0
 
-    
-    
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    changeTur = 0
+                
+
         gameDisplay.fill(white)
         mainTankX += tankMove
-        tank(mainTankX, mainTankY)
+        currentTurPos += changeTur
+        if currentTurPos > 8:
+            currentTurPos = 8
+        elif currentTurPos < 0:
+            currentTurPos = 0
+        tank(mainTankX, mainTankY, currentTurPos)
+        barrier(xlocation, randomHeight)
         pygame.display.update()
         clock.tick(FPS)
         
