@@ -41,7 +41,7 @@ def tank(x,y, turPos):
     y = int(y)
 
     possibleTurrets = [(x-27, y-2),
-                        (x-26, y-5),
+                       (x-26, y-5),
                        (x-25, y-8),
                        (x-23, y-12),
                        (x-20, y-14),
@@ -51,13 +51,11 @@ def tank(x,y, turPos):
                        (x-11, y-21)
                        ]
 
-
     pygame.draw.circle(gameDisplay, black, (x,y), int(tankHeight/2))
     pygame.draw.rect(gameDisplay, black, (x-tankHeight, y, tankWidth, tankHeight ))
 
     pygame.draw.line(gameDisplay, black, (x,y), possibleTurrets[turPos], turretWidth)
 
-    
     #Drawing the wheels
     pygame.draw.circle(gameDisplay, black, (x-15, y+20), wheelWidth)
     pygame.draw.circle(gameDisplay, black, (x-10, y+20), wheelWidth)
@@ -66,6 +64,8 @@ def tank(x,y, turPos):
     pygame.draw.circle(gameDisplay, black, (x+5, y+20), wheelWidth)
     pygame.draw.circle(gameDisplay, black, (x+10, y+20), wheelWidth)
     pygame.draw.circle(gameDisplay, black, (x+15, y+20), wheelWidth)
+
+    return possibleTurrets[turPos]
     
 
 def pause():
@@ -90,9 +90,9 @@ def pause():
 
         clock.tick(10)
 
-def barrier(xlocation, randomHeight):
-    pygame.draw.rect(gameDisplay, black, [xlocation, display_height-randomHeight, 50, randomHeight])
-
+def barrier(xlocation, randomHeight, barrier_width):
+    pygame.draw.rect(gameDisplay, black, [xlocation, display_height-randomHeight, barrier_width, randomHeight])
+    
     
 def score(score):
     text = smallfont.render("Score: "+str(score), True, black)
@@ -220,7 +220,34 @@ def message_to_screen(msg, color, y_displace=0, size= "small"):
     textRect.center = (display_width / 2), (display_height / 2) + y_displace
     gameDisplay.blit(textSurf, textRect)
 
+
+def fireShell(xy, tankx, tanky, turPos, gun_power):
     
+    fire = True
+    startingShell = list(xy)
+
+    while fire:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        print(startingShell[0], startingShell[1])
+        pygame.draw.circle(gameDisplay, red, (startingShell[0], startingShell[1]), 5)
+
+        startingShell[0] -= (12 - turPos)*2
+        startingShell[1] += int((((startingShell[0] - xy[0])* 0.015/(gun_power/50))**2) - (turPos+ turPos/(12 - turPos)))
+
+        #To deal with shell when it is below the screen
+        if startingShell[1] > display_height:
+            fire = False
+        
+        pygame.display.update()
+        clock.tick(60)
+
+def power(level):
+    text = smallfont.render("Power: "+ str(level)+"%", True, black)
+    gameDisplay.blit(text, [display_width/2, 0])
+            
 #main game function
 def gameLoop():
     
@@ -229,14 +256,20 @@ def gameLoop():
     mainTankX = display_width * 0.9
     mainTankY = display_height * 0.9
     tankMove = 0
+    barrier_width = 50
 
     currentTurPos = 0
     changeTur = 0
+
+    fire_power = 50
+    power_change = 0
 
     xlocation = (display_width / 2) + random.randint(-0.2 * display_width, 0.2 * display_width)
     randomHeight = random.randrange(display_height * 0.1, display_height * 0.6)
 
     while not gameExit:
+        gameDisplay.fill(white)
+        gun = tank(mainTankX, mainTankY, currentTurPos)
 
         if gameOver == True:
             message_to_screen("Game Over", red, -50, size="large")
@@ -270,23 +303,39 @@ def gameLoop():
                     changeTur = -1
                 elif event.key == pygame.K_p:
                     pause()
+                elif event.key == pygame.K_SPACE:
+                    fireShell(gun, mainTankX, mainTankY, currentTurPos, fire_power)
+                elif event.key == pygame.K_a:
+                    power_change = -1
+                elif event.key == pygame.K_d:
+                    power_change = 1
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     tankMove = 0
 
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     changeTur = 0
-                
 
-        gameDisplay.fill(white)
+                if event.key == pygame.K_a or event.key == pygame.K_d:
+                    power_change = 0
+                
         mainTankX += tankMove
         currentTurPos += changeTur
+        
         if currentTurPos > 8:
             currentTurPos = 8
         elif currentTurPos < 0:
             currentTurPos = 0
-        tank(mainTankX, mainTankY, currentTurPos)
-        barrier(xlocation, randomHeight)
+
+        if mainTankX - (tankWidth /2) < xlocation + barrier_width:
+            mainTankX += 5
+
+        fire_power += power_change
+
+        power(fire_power)
+            
+        
+        barrier(xlocation, randomHeight, barrier_width)
         pygame.display.update()
         clock.tick(FPS)
         
