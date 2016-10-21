@@ -236,6 +236,56 @@ def game_intro():
         pygame.display.update()
         clock.tick(15)
 
+def game_over():
+    
+    game_over = True
+
+    while game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        
+        gameDisplay.fill(white)
+        message_to_screen("Game Over", green, -100, "large")
+        message_to_screen("You Died",
+                          black,
+                          10,
+                          "small")
+
+        button("Play Again", 150,500,150,50, green, light_green, action="play" )
+        button("Controls",350,500,100,50, yellow, light_yellow, action="controls")
+        button("Quit", 550,500,100,50, red, light_red, action="quit")
+        
+        pygame.display.update()
+        clock.tick(15)
+
+
+
+def you_win():
+    
+    win = True
+
+    while win:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        
+        gameDisplay.fill(white)
+        message_to_screen("You Won!", green, -100, "large")
+        message_to_screen("Congradulations! You won nothing",
+                          black,
+                          10,
+                          "small")
+
+        button("Play Again", 150,500,150,50, green, light_green, action="play" )
+        button("Controls",350,500,100,50, yellow, light_yellow, action="controls")
+        button("Quit", 550,500,100,50, red, light_red, action="quit")
+        
+        pygame.display.update()
+        clock.tick(15)
+
     
 def text_objects(text, color, size):
     if size == "small":
@@ -549,6 +599,10 @@ def gameLoop():
         barrier(xlocation, randomHeight, barrier_width)
         gameDisplay.fill(green, rect=[0, display_height - ground_height, display_width, ground_height])
         pygame.display.update()
+        if player_health < 1:
+            game_over()
+        elif enemy_health < 1:
+            you_win()
         clock.tick(FPS)
         
     pygame.quit()
