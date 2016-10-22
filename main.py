@@ -405,8 +405,9 @@ def e_fireShell(xy, tankx, tanky, turPos, gun_power, xlocation, barrier_width, r
 
             startingShell[0] += (12 - turPos)*2
         
-                
-            startingShell[1] += int((((startingShell[0] - xy[0])* 0.015/(currentPower/50))**2) - (turPos+ turPos/(12 - turPos)))
+            gun_power = random.randrange(int(currentPower * 0.90), int(currentPower * 1.10))
+            
+            startingShell[1] += int((((startingShell[0] - xy[0])* 0.015/(gun_power/50))**2) - (turPos+ turPos/(12 - turPos)))
 
             #To deal with shell when it is below the screen
             if startingShell[1] > display_height - ground_height:
@@ -442,9 +443,10 @@ def e_fireShell(xy, tankx, tanky, turPos, gun_power, xlocation, barrier_width, r
         pygame.draw.circle(gameDisplay, red, (startingShell[0], startingShell[1]), 5)
 
         startingShell[0] += (12 - turPos)*2
-    
+
+        gun_power = random.randrange(int(currentPower * 0.90), int(currentPower * 1.10))
             
-        startingShell[1] += int((((startingShell[0] - xy[0])* 0.015/(currentPower/50))**2) - (turPos+ turPos/(12 - turPos)))
+        startingShell[1] += int((((startingShell[0] - xy[0])* 0.015/(gun_power/50))**2) - (turPos+ turPos/(12 - turPos)))
 
         #To deal with shell when it is below the screen
         if startingShell[1] > display_height - ground_height:
