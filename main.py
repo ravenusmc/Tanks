@@ -19,7 +19,7 @@ ground_height = 35
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Tanks')
-
+#fire_sound = pygame.mixer.Sound("fire.wav")
 clock = pygame.time.Clock()
 
 #Tank Variables
@@ -330,6 +330,7 @@ def explosion(x,y, size=50):
 
 
 def fireShell(xy, tankx, tanky, turPos, gun_power, xlocation, barrier_width, randomHeight, enemyTankX, enemyTankY):
+    #pygame.mixer.Sound.play(fire_sound)
     fire = True
     damage = 0
     
@@ -391,7 +392,7 @@ def fireShell(xy, tankx, tanky, turPos, gun_power, xlocation, barrier_width, ran
 
 #Enemy Controls for firing shell
 def e_fireShell(xy, tankx, tanky, turPos, gun_power, xlocation, barrier_width, randomHeight, ptankx, ptanky):
-
+    #pygame.mixer.Sound.play(fire_sound)
     damage = 0 
     currentPower = 1
     power_found = False
@@ -584,6 +585,29 @@ def gameLoop():
                 elif event.key == pygame.K_SPACE:
                     damage = fireShell(gun, mainTankX, mainTankY, currentTurPos, fire_power, xlocation, barrier_width, randomHeight,enemyTankX, enemyTankY)
                     enemy_health -= damage
+
+                    possibleMovement = ['f', 'r']
+                    moveIndex = random.randrange(0,2)
+
+                    for x in range(random.randrange(0,10)):
+                        if display_width * 0.3 > enemyTankX > display_width * 0.03:
+                            if possibleMovement[moveIndex] == "f":
+                                enemyTankX += 5
+                            elif possibleMovement[moveIndex] == "r":
+                                enemyTankX -= 5
+
+                            gameDisplay.fill(white)
+                            health_bars(player_health, enemy_health)
+                            gun = tank(mainTankX, mainTankY, currentTurPos)
+                            enemy_gun = enemy_tank(enemyTankX, enemyTankY, 8)
+                            fire_power += power_change
+                            power(fire_power)
+                            barrier(xlocation, randomHeight, barrier_width)
+                            gameDisplay.fill(green, rect=[0, display_height - ground_height, display_width, ground_height])
+                            pygame.display.update()
+                            clock.tick(FPS)
+                                                            
+                    
                     damage = e_fireShell(enemy_gun, enemyTankX, enemyTankY, 8, 50, xlocation, barrier_width, randomHeight, mainTankX, mainTankY)
                     player_health -= damage
                 elif event.key == pygame.K_a:
